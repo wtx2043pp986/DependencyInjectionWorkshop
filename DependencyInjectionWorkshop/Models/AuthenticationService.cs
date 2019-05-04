@@ -1,5 +1,4 @@
-﻿using System;
-using DependencyInjectionWorkshop.Repository;
+﻿using DependencyInjectionWorkshop.Repository;
 
 namespace DependencyInjectionWorkshop.Models
 {
@@ -41,13 +40,6 @@ namespace DependencyInjectionWorkshop.Models
                 return false;
             }
 
-        }
-    }
-
-    public class FailedTooManyTimeException : Exception
-    {
-        public FailedTooManyTimeException(string errorMessage) : base(errorMessage)
-        {
         }
     }
 }
