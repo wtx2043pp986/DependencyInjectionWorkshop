@@ -47,7 +47,9 @@ namespace DependencyInjectionWorkshop.Models
                 else
                 {
                     var slackClient = new SlackClient("my api token");
-                    slackClient.PostMessage(res => { }, "my channel", "my message", "my bot name");
+
+                    var message = $"{accountId} try to verify failed";
+                    slackClient.PostMessage(res => { }, "my channel", message, "my bot name");
                     return false;
                 }
             }
