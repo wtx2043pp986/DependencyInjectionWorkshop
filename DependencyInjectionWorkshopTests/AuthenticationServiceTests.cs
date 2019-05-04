@@ -43,9 +43,9 @@ namespace DependencyInjectionWorkshopTests
             GivenHash(DefaultHashPassword, DefaultPassword);
             GivenOtp(DefaultAccountId, DefautOtp);
 
-            var verify = WhenVerify(DefaultAccountId, DefaultPassword, DefautOtp);
+            var isValid = WhenVerify(DefaultAccountId, DefaultPassword, DefautOtp);
             
-            ShouldBeValid(verify);
+            ShouldBeValid(isValid);
         }
 
 
@@ -56,9 +56,30 @@ namespace DependencyInjectionWorkshopTests
             GivenHash(DefaultHashPassword, DefaultPassword);
             GivenOtp(DefaultAccountId, DefautOtp);
 
-            var verify = WhenVerify(DefaultAccountId, DefaultPassword, "wrong otp");
+            var isValid = WhenVerify(DefaultAccountId, DefaultPassword, "wrong otp");
             
-            ShouldBeInvalid(verify);
+            ShouldBeInvalid(isValid);
+        }
+
+        [Test]
+        public void notify_user_when_invalid()
+        {
+            WhenInvalid();
+            ShouldNotifyUser();
+        }
+
+        private void ShouldNotifyUser()
+        {
+            _notification.Received(1).Notify(Arg.Any<string>());
+        }
+
+        private void WhenInvalid()
+        {
+            GivenPassword(DefaultAccountId, DefaultHashPassword);
+            GivenHash(DefaultHashPassword, DefaultPassword);
+            GivenOtp(DefaultAccountId, DefautOtp);
+
+            var isValid = WhenVerify(DefaultAccountId, DefaultPassword, "wrong otp");
         }
 
         private static void ShouldBeInvalid(bool verify)
