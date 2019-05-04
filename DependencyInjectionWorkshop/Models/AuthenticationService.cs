@@ -40,14 +40,24 @@ namespace DependencyInjectionWorkshop.Models
                     throw new Exception($"web api error, accountId:{accountId}");
                 }
 
+                var failedCounterHttpClient = new HttpClient() { BaseAddress = new Uri("http://joey.dev/") };
+
                 if (hashedPasswordFromDb == hashedPassword && currentOtp == otp)
                 {
+                    
+                    var resetFailedCounterApiResponse = failedCounterHttpClient
+                        .PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
+                    resetFailedCounterApiResponse.EnsureSuccessStatusCode();
+
                     return true;
                 }
                 else
                 {
-                    var slackClient = new SlackClient("my api token");
+                    var addFailedCounterApiResponse = failedCounterHttpClient.
+                        PostAsJsonAsync("api/failedCounter/Add", accountId).Result;
+                    addFailedCounterApiResponse.EnsureSuccessStatusCode();
 
+                    var slackClient = new SlackClient("my api token");
                     var message = $"{accountId} try to verify failed";
                     slackClient.PostMessage(res => { }, "my channel", message, "my bot name");
                     return false;
