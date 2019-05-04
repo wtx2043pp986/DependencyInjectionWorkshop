@@ -39,7 +39,6 @@ namespace DependencyInjectionWorkshopTests
         [Test]
         public void is_valid()
         {
-
             GivenPassword(DefaultAccountId, DefaultHashPassword);
             GivenHash(DefaultHashPassword, DefaultPassword);
             GivenOtp(DefaultAccountId, DefautOtp);
@@ -48,6 +47,25 @@ namespace DependencyInjectionWorkshopTests
             
             ShouldBeValid(verify);
         }
+
+
+        [Test]
+        public void is_invalid_when_wrong_otp()
+        {
+            GivenPassword(DefaultAccountId, DefaultHashPassword);
+            GivenHash(DefaultHashPassword, DefaultPassword);
+            GivenOtp(DefaultAccountId, DefautOtp);
+
+            var verify = WhenVerify(DefaultAccountId, DefaultPassword, "wrong otp");
+            
+            ShouldBeInvalid(verify);
+        }
+
+        private static void ShouldBeInvalid(bool verify)
+        {
+            Assert.IsFalse(verify);
+        }
+
 
         private static void ShouldBeValid(bool verify)
         {
