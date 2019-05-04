@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Dapper;
+using NLog;
 using SlackAPI;
 
 namespace DependencyInjectionWorkshop.Models
@@ -15,7 +16,7 @@ namespace DependencyInjectionWorkshop.Models
         public bool Verify(string accountId, string password, string otp)
         {
             var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.dev/") };
-            var isLockedResponse = httpClient.PostAsJsonAsync("api/failedCounter/Reset", accountId).Result;
+            var isLockedResponse = httpClient.PostAsJsonAsync("api/failedCounter/isLocked", accountId).Result;
             isLockedResponse.EnsureSuccessStatusCode();
             var isAccountLocked = isLockedResponse.Content.ReadAsAsync<bool>().Result;
             if (isAccountLocked)
@@ -68,6 +69,14 @@ namespace DependencyInjectionWorkshop.Models
                     PostAsJsonAsync("api/failedCounter/Add", accountId).Result;
                 addFailedCounterApiResponse.EnsureSuccessStatusCode();
 
+                var getFailedCounterApiResponse = failedCounterHttpClient.
+                    PostAsJsonAsync("api/failedCounter/GetFailedCount", accountId).Result;
+                getFailedCounterApiResponse.EnsureSuccessStatusCode();
+                var failedCount = getFailedCounterApiResponse.Content.ReadAsAsync<int>().Result;
+
+                var logger = LogManager.GetCurrentClassLogger();
+                logger.Info($"{accountId} has already verified failed {failedCount}");
+                
                 var slackClient = new SlackClient("my api token");
                 var message = $"{accountId} try to verify failed";
                 slackClient.PostMessage(res => { }, "my channel", message, "my bot name");
