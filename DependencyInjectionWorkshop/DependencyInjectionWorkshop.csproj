@@ -73,14 +73,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\ConsoleAdapter.cs" />
+    <Compile Include="Adapters\Interfaces\IHash.cs" />
+    <Compile Include="Adapters\Interfaces\ILogger.cs" />
+    <Compile Include="Adapters\Interfaces\INotification.cs" />
+    <Compile Include="Adapters\NLogAdapter.cs" />
+    <Compile Include="Adapters\Sha256Adapter.cs" />
+    <Compile Include="Adapters\SlackAdapter.cs" />
     <Compile Include="CustomExceptions\FailedTooManyTimeException.cs" />
     <Compile Include="Models\AuthenticationService.cs" />
     <Compile Include="Models\FailedCounter.cs" />
-    <Compile Include="Models\NLogAdapter.cs" />
+    <Compile Include="Models\Interfaces\IFailedCounter.cs" />
+    <Compile Include="Models\Member.cs" />
     <Compile Include="Models\OtpRemoteProxy.cs" />
-    <Compile Include="Models\Sha256Adapter.cs" />
-    <Compile Include="Models\SlackAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\IProfile.cs" />
     <Compile Include="Repository\ProfileRepository.cs" />
   </ItemGroup>
   <ItemGroup>

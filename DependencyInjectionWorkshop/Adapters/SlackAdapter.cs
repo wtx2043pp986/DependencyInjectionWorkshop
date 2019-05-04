@@ -1,8 +1,9 @@
-﻿using SlackAPI;
+﻿using DependencyInjectionWorkshop.Adapters.Interfaces;
+using SlackAPI;
 
-namespace DependencyInjectionWorkshop.Models
+namespace DependencyInjectionWorkshop.Adapters
 {
-    public class SlackAdapter
+    public class SlackAdapter : INotification
     {
         public void Notify(string accountId)
         {

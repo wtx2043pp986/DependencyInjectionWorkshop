@@ -3,7 +3,12 @@ using System.Net.Http;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public class OtpRemoteProxy
+    public interface IOtp
+    {
+        string GetCurrentOtp(string accountId);
+    }
+
+    public class OtpRemoteProxy : IOtp
     {
         public string GetCurrentOtp(string accountId)
         {

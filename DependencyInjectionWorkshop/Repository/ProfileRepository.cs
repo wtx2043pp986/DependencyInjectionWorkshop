@@ -5,9 +5,9 @@ using Dapper;
 
 namespace DependencyInjectionWorkshop.Repository
 {
-    public class ProfileRepository
+    public class ProfileRepository : IProfile
     {
-        public string GetPasswordFromDb(string accountId)
+        public string GetPassword(string accountId)
         {
             string hashedPasswordFromDb;
             using (var connection = new SqlConnection("my connection string"))
