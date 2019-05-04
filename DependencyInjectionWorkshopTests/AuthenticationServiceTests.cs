@@ -13,7 +13,8 @@ namespace DependencyInjectionWorkshopTests
         private const string DefaultAccountId = "roberson";
         private const string DefaultHashPassword = "my_hash_password";
         private const string DefaultPassword = "password";
-        private const string DefautOtp = "123456";
+        private const string DefaultOtp = "123456";
+        private const int DefaultFailedCount = 87;
         private IProfile _profile;
         private IOtp _otpRemoteProxy;
         private IHash _hash;
@@ -41,9 +42,9 @@ namespace DependencyInjectionWorkshopTests
         {
             GivenPassword(DefaultAccountId, DefaultHashPassword);
             GivenHash(DefaultHashPassword, DefaultPassword);
-            GivenOtp(DefaultAccountId, DefautOtp);
+            GivenOtp(DefaultAccountId, DefaultOtp);
 
-            var isValid = WhenVerify(DefaultAccountId, DefaultPassword, DefautOtp);
+            var isValid = WhenVerify(DefaultAccountId, DefaultPassword, DefaultOtp);
             
             ShouldBeValid(isValid);
         }
@@ -54,7 +55,7 @@ namespace DependencyInjectionWorkshopTests
         {
             GivenPassword(DefaultAccountId, DefaultHashPassword);
             GivenHash(DefaultHashPassword, DefaultPassword);
-            GivenOtp(DefaultAccountId, DefautOtp);
+            GivenOtp(DefaultAccountId, DefaultOtp);
 
             var isValid = WhenVerify(DefaultAccountId, DefaultPassword, "wrong otp");
             
@@ -72,12 +73,33 @@ namespace DependencyInjectionWorkshopTests
         {
             _notification.Received(1).Notify(Arg.Any<string>());
         }
+        
+        
+        [Test]
+        public void Log_account_failed_count_when_invalid()
+        {
+            GivenFailedCount();
+            
+            WhenInvalid();
+
+            LogShouldContains(DefaultAccountId);
+        }
+
+        private void GivenFailedCount()
+        {
+            _failedCounter.Get(DefaultAccountId).ReturnsForAnyArgs(DefaultFailedCount);
+        }
+
+        private void LogShouldContains(string accountId)
+        {
+            _logger.Received(1).Info(Arg.Is<string>(x => x.Contains(accountId) && x.Contains(DefaultFailedCount.ToString())));
+        }
 
         private void WhenInvalid()
         {
             GivenPassword(DefaultAccountId, DefaultHashPassword);
             GivenHash(DefaultHashPassword, DefaultPassword);
-            GivenOtp(DefaultAccountId, DefautOtp);
+            GivenOtp(DefaultAccountId, DefaultOtp);
 
             var isValid = WhenVerify(DefaultAccountId, DefaultPassword, "wrong otp");
         }
