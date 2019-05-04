@@ -21,7 +21,7 @@ namespace DependencyInjectionWorkshop.Models
             if (isAccountLocked)
             {
                 var errorMessage = $"{accountId} has been locked, ";
-                throw new AccountLockedException(errorMessage);
+                throw new FailedTooManyTimeException(errorMessage);
             }
             
             string hashedPasswordFromDb;
@@ -77,9 +77,9 @@ namespace DependencyInjectionWorkshop.Models
         }
     }
 
-    public class AccountLockedException : Exception
+    public class FailedTooManyTimeException : Exception
     {
-        public AccountLockedException(string errorMessage) : base(errorMessage)
+        public FailedTooManyTimeException(string errorMessage) : base(errorMessage)
         {
         }
     }
