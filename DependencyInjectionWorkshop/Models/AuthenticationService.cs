@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Dapper;
+using SlackAPI;
 
 namespace DependencyInjectionWorkshop.Models
 {
@@ -27,12 +28,12 @@ namespace DependencyInjectionWorkshop.Models
                 var hashedPassword = hash.ToString();
                 
                 var httpClient = new HttpClient() { BaseAddress = new Uri("http://joey.com/") };
-                var response = httpClient.PostAsJsonAsync("api/otps", accountId).Result;
+                var otpApiResponse = httpClient.PostAsJsonAsync("api/otps", accountId).Result;
 
                 string currentOtp;
-                if (response.IsSuccessStatusCode)
+                if (otpApiResponse.IsSuccessStatusCode)
                 {
-                    currentOtp = response.Content.ReadAsAsync<string>().Result;
+                    currentOtp = otpApiResponse.Content.ReadAsAsync<string>().Result;
                 }
                 else
                 {
@@ -45,6 +46,8 @@ namespace DependencyInjectionWorkshop.Models
                 }
                 else
                 {
+                    var slackClient = new SlackClient("my api token");
+                    slackClient.PostMessage(res => { }, "my channel", "my message", "my bot name");
                     return false;
                 }
             }
