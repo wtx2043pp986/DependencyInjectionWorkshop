@@ -1,4 +1,6 @@
-﻿using DependencyInjectionWorkshop.Adapters.Interfaces;
+﻿using System;
+using DependencyInjectionWorkshop.Adapters.Interfaces;
+using DependencyInjectionWorkshop.CustomExceptions;
 using DependencyInjectionWorkshop.Models;
 using DependencyInjectionWorkshop.Models.Interfaces;
 using DependencyInjectionWorkshop.Repository;
@@ -21,7 +23,7 @@ namespace DependencyInjectionWorkshopTests
         private INotification _notification;
         private IFailedCounter _failedCounter;
         private ILogger _logger;
-        private AuthenticationService _authenticationService;
+        private IAuthentication _authenticationService;
 
         [SetUp]
         public void Setup()
@@ -69,9 +71,35 @@ namespace DependencyInjectionWorkshopTests
             ShouldNotifyUser();
         }
 
+        [Test]
+        public void reset_failed_count_when_valid()
+        {
+            WhenValid();
+            _failedCounter.Received(1).Reset(DefaultAccountId);
+        }
+        
+        [Test]
+        public void account_is_locked()
+        {
+            _failedCounter.CheckAccountIsLocked(DefaultAccountId).ReturnsForAnyArgs(true);
+
+            TestDelegate action = () => _authenticationService.Verify(DefaultAccountId, DefaultHashPassword, DefaultOtp);
+            Assert.Throws<FailedTooManyTimeException>(action);
+        }
+
+        private bool WhenValid()
+        {
+            GivenPassword(DefaultAccountId, DefaultHashPassword);
+            GivenHash(DefaultHashPassword, DefaultPassword);
+            GivenOtp(DefaultAccountId, DefaultOtp);
+
+            var isValid = WhenVerify(DefaultAccountId, DefaultPassword, DefaultOtp);
+            return isValid;
+        }
+        
         private void ShouldNotifyUser()
         {
-            _notification.Received(1).Notify(Arg.Any<string>());
+            _notification.Received(1).PushMessage(Arg.Any<string>());
         }
         
         
@@ -95,13 +123,14 @@ namespace DependencyInjectionWorkshopTests
             _logger.Received(1).Info(Arg.Is<string>(x => x.Contains(accountId) && x.Contains(DefaultFailedCount.ToString())));
         }
 
-        private void WhenInvalid()
+        private bool WhenInvalid()
         {
             GivenPassword(DefaultAccountId, DefaultHashPassword);
             GivenHash(DefaultHashPassword, DefaultPassword);
             GivenOtp(DefaultAccountId, DefaultOtp);
 
             var isValid = WhenVerify(DefaultAccountId, DefaultPassword, "wrong otp");
+            return isValid;
         }
 
         private static void ShouldBeInvalid(bool verify)

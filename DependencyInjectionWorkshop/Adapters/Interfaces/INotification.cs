@@ -2,6 +2,6 @@
 {
     public interface INotification
     {
-        void Notify(string accountId);
+        void PushMessage(string accountId);
     }
 }

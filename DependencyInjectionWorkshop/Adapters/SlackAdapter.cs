@@ -5,7 +5,7 @@ namespace DependencyInjectionWorkshop.Adapters
 {
     public class SlackAdapter : INotification
     {
-        public void Notify(string accountId)
+        public void PushMessage(string accountId)
         {
             var slackClient = new SlackClient("my api token");
             var message = $"{accountId} try to verify failed";

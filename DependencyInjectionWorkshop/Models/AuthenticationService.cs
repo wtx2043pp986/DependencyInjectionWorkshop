@@ -1,12 +1,18 @@
 ﻿using System.Net.Http.Formatting;
 using DependencyInjectionWorkshop.Adapters;
 using DependencyInjectionWorkshop.Adapters.Interfaces;
+using DependencyInjectionWorkshop.CustomExceptions;
 using DependencyInjectionWorkshop.Models.Interfaces;
 using DependencyInjectionWorkshop.Repository;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public class AuthenticationService
+    public interface IAuthentication
+    {
+        bool Verify(string accountId, string password, string otp);
+    }
+
+    public class AuthenticationService : IAuthentication
     {
         private readonly IFailedCounter _failedCounter;
         private readonly IProfile _profile;
@@ -39,7 +45,12 @@ namespace DependencyInjectionWorkshop.Models
 
         public bool Verify(string accountId, string password, string otp)
         {
-            _failedCounter.CheckAccountIsLocked(accountId);
+            var isAccountLocked = _failedCounter.CheckAccountIsLocked(accountId);
+            if (isAccountLocked)
+            {
+                var errorMessage = $"{accountId} has been locked, ";
+                throw new FailedTooManyTimeException(errorMessage);
+            }
 
             var hashedPasswordFromDb = _profile.GetPassword(accountId);
 
@@ -61,7 +72,7 @@ namespace DependencyInjectionWorkshop.Models
 
                 _logger.Info($"{accountId} has already verified failed {failedCount}");
 
-                _notification.Notify(accountId);
+                _notification.PushMessage(accountId);
 
                 return false;
             }

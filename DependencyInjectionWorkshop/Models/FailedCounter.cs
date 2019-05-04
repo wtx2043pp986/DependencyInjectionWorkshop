@@ -22,16 +22,13 @@ namespace DependencyInjectionWorkshop.Models
             addFailedCounterApiResponse.EnsureSuccessStatusCode();
         }
 
-        public void CheckAccountIsLocked(string accountId)
+        public bool CheckAccountIsLocked(string accountId)
         {
             var isLockedResponse = _httpClient.PostAsJsonAsync("api/failedCounter/isLocked", accountId).Result;
             isLockedResponse.EnsureSuccessStatusCode();
             var isAccountLocked = isLockedResponse.Content.ReadAsAsync<bool>().Result;
-            if (isAccountLocked)
-            {
-                var errorMessage = $"{accountId} has been locked, ";
-                throw new FailedTooManyTimeException(errorMessage);
-            }
+
+            return isAccountLocked;
         }
 
         public int Get(string accountId)
