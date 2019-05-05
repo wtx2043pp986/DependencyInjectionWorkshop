@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Formatting;
 using DependencyInjectionWorkshop.Adapters;
 using DependencyInjectionWorkshop.Adapters.Interfaces;
-using DependencyInjectionWorkshop.CustomExceptions;
 using DependencyInjectionWorkshop.Models.Interfaces;
 using DependencyInjectionWorkshop.Repository;
 
@@ -19,8 +18,7 @@ namespace DependencyInjectionWorkshop.Models
         private readonly IHash _hash;
         private readonly IOtp _otpRemoteProxy;
         private readonly ILogger _logger;
-        private readonly INotification _notification;
-        
+
         //public AuthenticationService()
         //{
         //    _failedCounter = new FailedCounter();
@@ -31,27 +29,19 @@ namespace DependencyInjectionWorkshop.Models
         //    _notification = new SlackAdapter();
         //}
 
-        public AuthenticationService(IFailedCounter failedCounter, IProfile profile, 
-            IHash hash, IOtp otpRemoteProxy, 
-            ILogger logger, INotification notification)
+        public AuthenticationService(IFailedCounter failedCounter, IProfile profile,
+            IHash hash, IOtp otpRemoteProxy,
+            ILogger logger)
         {
             _failedCounter = failedCounter;
             _profile = profile;
             _hash = hash;
             _otpRemoteProxy = otpRemoteProxy;
             _logger = logger;
-            _notification = notification;
         }
 
         public bool Verify(string accountId, string password, string otp)
         {
-            var isAccountLocked = _failedCounter.CheckAccountIsLocked(accountId);
-            if (isAccountLocked)
-            {
-                var errorMessage = $"{accountId} has been locked, ";
-                throw new FailedTooManyTimeException(errorMessage);
-            }
-
             var hashedPasswordFromDb = _profile.GetPassword(accountId);
 
             var hashedPassword = _hash.GetHash(password);
@@ -71,8 +61,6 @@ namespace DependencyInjectionWorkshop.Models
                 var failedCount = _failedCounter.Get(accountId);
 
                 _logger.Info($"{accountId} has already verified failed {failedCount}");
-
-                _notification.PushMessage(accountId);
 
                 return false;
             }
