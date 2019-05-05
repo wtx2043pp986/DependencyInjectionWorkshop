@@ -38,7 +38,8 @@ namespace DependencyInjectionWorkshopTests
             var authenticationService= new AuthenticationService(_failedCounter, _profile, _hash, _otpRemoteProxy, _logger);
             var notificationDecorator = new NotificationDecorator(authenticationService,_notification);
 
-            _authentication = new FailedCounterDecorator(notificationDecorator,_failedCounter);
+            var failedCounterDecorator = new FailedCounterDecorator(notificationDecorator,_failedCounter);
+            _authentication = new LogDecorator(failedCounterDecorator, _failedCounter, _logger);
         }
 
         [Test]
