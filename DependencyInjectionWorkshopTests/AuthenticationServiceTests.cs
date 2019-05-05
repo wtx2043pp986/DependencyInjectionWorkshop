@@ -23,7 +23,7 @@ namespace DependencyInjectionWorkshopTests
         private INotification _notification;
         private IFailedCounter _failedCounter;
         private ILogger _logger;
-        private IAuthentication _authenticationService;
+        private IAuthentication _authentication;
 
         [SetUp]
         public void Setup()
@@ -36,9 +36,10 @@ namespace DependencyInjectionWorkshopTests
             _failedCounter = Substitute.For<IFailedCounter>();
             _logger = Substitute.For<ILogger>();
 
-            var authenticationService = new AuthenticationService(_failedCounter, _profile, _hash, _otpRemoteProxy, _logger);
+            var authenticationService = new AuthenticationService(_failedCounter, _profile, _hash, _otpRemoteProxy);
             var notificationDecorator = new NotificationDecorator(authenticationService, _notification);
-            _authenticationService = new FailedCounterDecorator(notificationDecorator, _failedCounter);
+            var logDecorator = new FailedCounterDecorator(notificationDecorator, _failedCounter);
+            _authentication = new LogDecorator(logDecorator, _failedCounter, _logger);
 
         }
 
@@ -86,7 +87,7 @@ namespace DependencyInjectionWorkshopTests
         {
             _failedCounter.CheckAccountIsLocked(DefaultAccountId).ReturnsForAnyArgs(true);
 
-            TestDelegate action = () => _authenticationService.Verify(DefaultAccountId, DefaultHashPassword, DefaultOtp);
+            TestDelegate action = () => _authentication.Verify(DefaultAccountId, DefaultHashPassword, DefaultOtp);
             Assert.Throws<FailedTooManyTimeException>(action);
         }
 
@@ -164,7 +165,7 @@ namespace DependencyInjectionWorkshopTests
 
         private bool WhenVerify(string accountId, string password, string otp)
         {
-            return _authenticationService.Verify(accountId, password, otp);
+            return _authentication.Verify(accountId, password, otp);
         }
     }
 }

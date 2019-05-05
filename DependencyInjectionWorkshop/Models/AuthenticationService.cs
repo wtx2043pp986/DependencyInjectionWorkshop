@@ -6,38 +6,20 @@ using DependencyInjectionWorkshop.Repository;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public interface IAuthentication
-    {
-        bool Verify(string accountId, string password, string otp);
-    }
-
     public class AuthenticationService : IAuthentication
     {
         private readonly IFailedCounter _failedCounter;
         private readonly IProfile _profile;
         private readonly IHash _hash;
         private readonly IOtp _otpRemoteProxy;
-        private readonly ILogger _logger;
-
-        //public AuthenticationService()
-        //{
-        //    _failedCounter = new FailedCounter();
-        //    _profile = new ProfileRepository();
-        //    _hash = new Sha256Adapter();
-        //    _otpRemoteProxy = new OtpRemoteProxy();
-        //    _logger = new NLogAdapter();
-        //    _notification = new SlackAdapter();
-        //}
 
         public AuthenticationService(IFailedCounter failedCounter, IProfile profile,
-            IHash hash, IOtp otpRemoteProxy,
-            ILogger logger)
+            IHash hash, IOtp otpRemoteProxy)
         {
             _failedCounter = failedCounter;
             _profile = profile;
             _hash = hash;
             _otpRemoteProxy = otpRemoteProxy;
-            _logger = logger;
         }
 
         public bool Verify(string accountId, string password, string otp)
@@ -57,10 +39,6 @@ namespace DependencyInjectionWorkshop.Models
             else
             {
                 _failedCounter.Add(accountId);
-
-                var failedCount = _failedCounter.Get(accountId);
-
-                _logger.Info($"{accountId} has already verified failed {failedCount}");
 
                 return false;
             }

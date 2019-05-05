@@ -84,7 +84,9 @@
     <Compile Include="Models\AuthenticationService.cs" />
     <Compile Include="Models\FailedCounter.cs" />
     <Compile Include="Models\FailedCounterDecorator.cs" />
+    <Compile Include="Models\IAuthentication.cs" />
     <Compile Include="Models\Interfaces\IFailedCounter.cs" />
+    <Compile Include="Models\LogDecorator.cs" />
     <Compile Include="Models\Member.cs" />
     <Compile Include="Models\NotificationDecorator.cs" />
     <Compile Include="Models\OtpRemoteProxy.cs" />
