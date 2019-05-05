@@ -14,10 +14,9 @@ namespace DependencyInjectionWorkshop.Models
         private readonly IHash _hash;
         private readonly IOtp _otpRemoteProxy;
         private readonly ILogger _logger;
-        
+
         public AuthenticationService(IFailedCounter failedCounter, IProfile profile, 
-            IHash hash, IOtp otpRemoteProxy, 
-            ILogger logger)
+            IHash hash, IOtp otpRemoteProxy, ILogger logger)
         {
             _failedCounter = failedCounter;
             _profile = profile;
@@ -26,15 +25,13 @@ namespace DependencyInjectionWorkshop.Models
             _logger = logger;
         }
 
+        public IFailedCounter FailedCounter
+        {
+            get { return _failedCounter; }
+        }
+
         public bool Verify(string accountId, string password, string otp)
         {
-            var isAccountLocked = _failedCounter.CheckAccountIsLocked(accountId);
-            if (isAccountLocked)
-            {
-                var errorMessage = $"{accountId} has been locked, ";
-                throw new FailedTooManyTimeException(errorMessage);
-            }
-
             var hashedPasswordFromDb = _profile.GetPassword(accountId);
 
             var hashedPassword = _hash.GetHash(password);
@@ -42,14 +39,12 @@ namespace DependencyInjectionWorkshop.Models
             var currentOtp = _otpRemoteProxy.GetCurrentOtp(accountId);
 
             if (hashedPasswordFromDb == hashedPassword && currentOtp == otp)
-            {
-                _failedCounter.Reset(accountId);
-
+            {   
                 return true;
             }
             else
             {
-                _failedCounter.Add(accountId);
+                //AddFailedCounter(accountId);
 
                 var failedCount = _failedCounter.Get(accountId);
 
@@ -57,7 +52,6 @@ namespace DependencyInjectionWorkshop.Models
                 
                 return false;
             }
-
         }
     }
 }
