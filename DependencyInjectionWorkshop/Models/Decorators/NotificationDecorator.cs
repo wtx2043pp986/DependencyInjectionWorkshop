@@ -1,6 +1,7 @@
 ﻿using DependencyInjectionWorkshop.Adapters.Interfaces;
+using DependencyInjectionWorkshop.Models.Interfaces;
 
-namespace DependencyInjectionWorkshop.Models
+namespace DependencyInjectionWorkshop.Models.Decorators
 {
     public class NotificationDecorator : AuthenticationBaseDecorator
     {

@@ -1,4 +1,4 @@
-﻿namespace DependencyInjectionWorkshop.Models
+﻿namespace DependencyInjectionWorkshop.Models.Interfaces
 {
     public interface IAuthentication
     {

@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Net.Http;
+using DependencyInjectionWorkshop.Models.Interfaces;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public interface IOtp
-    {
-        string GetCurrentOtp(string accountId);
-    }
-
     public class OtpRemoteProxy : IOtp
     {
         public string GetCurrentOtp(string accountId)

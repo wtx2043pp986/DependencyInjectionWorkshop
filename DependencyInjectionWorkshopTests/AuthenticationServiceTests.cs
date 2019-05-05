@@ -2,6 +2,7 @@
 using DependencyInjectionWorkshop.Adapters.Interfaces;
 using DependencyInjectionWorkshop.CustomExceptions;
 using DependencyInjectionWorkshop.Models;
+using DependencyInjectionWorkshop.Models.Decorators;
 using DependencyInjectionWorkshop.Models.Interfaces;
 using DependencyInjectionWorkshop.Repository;
 using NSubstitute;

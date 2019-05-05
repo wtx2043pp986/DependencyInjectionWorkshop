@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Formatting;
 using DependencyInjectionWorkshop.Adapters;
 using DependencyInjectionWorkshop.Adapters.Interfaces;
+using DependencyInjectionWorkshop.Models.Interfaces;
 using DependencyInjectionWorkshop.Repository;
 
 namespace DependencyInjectionWorkshop.Models
