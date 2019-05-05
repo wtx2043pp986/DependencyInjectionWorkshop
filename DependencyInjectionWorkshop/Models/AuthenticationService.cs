@@ -1,23 +1,20 @@
 ﻿using System.Net.Http.Formatting;
 using DependencyInjectionWorkshop.Adapters;
 using DependencyInjectionWorkshop.Adapters.Interfaces;
-using DependencyInjectionWorkshop.Models.Interfaces;
 using DependencyInjectionWorkshop.Repository;
 
 namespace DependencyInjectionWorkshop.Models
 {
     public class AuthenticationService : IAuthentication
     {
-        private readonly IFailedCounter _failedCounter;
         private readonly IProfile _profile;
         private readonly IHash _hash;
         private readonly IOtp _otpRemoteProxy;
 
-        public AuthenticationService(IFailedCounter failedCounter, IProfile profile,
+        public AuthenticationService(IProfile profile,
             IHash hash, IOtp otpRemoteProxy)
         {
-            _failedCounter = failedCounter;
-            _profile = profile;
+            _profile = profile; 
             _hash = hash;
             _otpRemoteProxy = otpRemoteProxy;
         }
@@ -32,17 +29,12 @@ namespace DependencyInjectionWorkshop.Models
 
             if (hashedPasswordFromDb == hashedPassword && currentOtp == otp)
             {
-                _failedCounter.Reset(accountId);
-
                 return true;
             }
             else
             {
-                _failedCounter.Add(accountId);
-
                 return false;
             }
-
         }
     }
 }

@@ -29,6 +29,15 @@ namespace DependencyInjectionWorkshop.Models
 
             var isValid = _authentication.Verify(accountId, password, otp);
 
+            if (isValid)
+            {
+                _failedCounter.Reset(accountId);
+            }
+            else
+            {
+                _failedCounter.Add(accountId);
+            }
+
             return isValid;
         }
     }
