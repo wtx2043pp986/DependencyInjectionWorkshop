@@ -3,15 +3,13 @@ using DependencyInjectionWorkshop.Models.Interfaces;
 
 namespace DependencyInjectionWorkshop.Models
 {
-    public class LogDecorator : IAuthentication
+    public class LogDecorator : AuthenticationBaseDecorator
     {
-        private IAuthentication _authentication;
         private readonly IFailedCounter _failedCounter;
         private readonly ILogger _logger;
 
-        public LogDecorator(IAuthentication authentication, IFailedCounter failedCounter, ILogger logger)
+        public LogDecorator(IAuthentication authentication, IFailedCounter failedCounter, ILogger logger) : base(authentication)
         {
-            _authentication = authentication;
             _failedCounter = failedCounter;
             _logger = logger;
         }
@@ -19,13 +17,13 @@ namespace DependencyInjectionWorkshop.Models
         private void LogFailedCounter(string accountId)
         {
             var failedCount = _failedCounter.Get(accountId);
-            
+
             _logger.Info($"{accountId} has already verified failed {failedCount}");
         }
 
-        public bool Verify(string accountId, string password, string otp)
+        public override bool Verify(string accountId, string password, string otp)
         {
-            var isValid = _authentication.Verify(accountId, password, otp);
+            var isValid = base.Verify(accountId, password, otp);
 
             if (!isValid)
             {

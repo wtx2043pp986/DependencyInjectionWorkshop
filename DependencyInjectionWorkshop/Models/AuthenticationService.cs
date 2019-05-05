@@ -14,7 +14,7 @@ namespace DependencyInjectionWorkshop.Models
         public AuthenticationService(IProfile profile,
             IHash hash, IOtp otpRemoteProxy)
         {
-            _profile = profile; 
+            _profile = profile;
             _hash = hash;
             _otpRemoteProxy = otpRemoteProxy;
         }
